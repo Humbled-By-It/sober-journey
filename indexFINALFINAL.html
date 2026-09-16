@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Beck's Sober Almanac</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Libre+Franklin:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  :root{
+    --forest:#1f2d26; --forest-2:#28382f; --parchment:#f3ecdd; --parch-warm:#ece2cd;
+    --ember:#c15a3a; --ember-soft:#d98b6a; --moss:#7d9070; --moss-deep:#5c6f52;
+    --dusk:#5a5470; --gold:#c9a24b; --ink:#221f1a; --ink-soft:#5a5348; --line:#d6cab2;
+    --sans:'Libre Franklin',system-ui,-apple-system,Segoe UI,Helvetica,Arial,sans-serif;
+    --serif:'Newsreader',Georgia,serif;
+    --read:'Newsreader',Georgia,serif;
+    --wide:1040px; --read-col:680px;
+  }
+  /* tabular, aligned figures for all the data numbers */
+  .day-num,.counter-num,.jstat-num,.pct-line b,.entry-day{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1;}
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  body{
+    font-family:'Newsreader',Georgia,serif; color:var(--ink);
+    background:radial-gradient(1200px 600px at 50% -10%, #f7f1e4 0%, var(--parchment) 55%);
+    min-height:100vh; line-height:1.5; padding-bottom:48px;
+  }
+  .hidden{display:none !important;}
+
+  /* HERO */
+  .hero{display:flex;flex-direction:column;align-items:center;gap:14px;padding:40px 26px 8px;max-width:640px;margin:0 auto;text-align:center;}
+  .ring-wrap{position:relative;width:240px;height:240px;flex-shrink:0;margin:0 auto;}
+  .season-ring{width:100%;height:100%;transform:rotate(-90deg);}
+  .ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+  .day-num{font-family:var(--serif);font-weight:500;font-size:60px;line-height:.9;color:var(--forest);}
+  .day-label{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-soft);margin-top:6px;}
+  .hero-meta{width:100%;}
+  .season-name{font-family:var(--serif);font-size:32px;font-weight:400;color:var(--forest);line-height:1;margin-bottom:6px;}
+  .date-today{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--ink-soft);text-transform:uppercase;}
+  .milestone{margin-top:12px;font-size:15px;font-style:italic;color:var(--ember);line-height:1.35;}
+  .ring-caption{max-width:640px;margin:6px auto 0;padding:0 26px;text-align:center;font-style:italic;font-size:12.5px;color:var(--ink-soft);}
+
+  /* COUNTERS strip */
+  .counters{display:flex;gap:1px;max-width:640px;margin:14px auto 0;padding:0 26px;}
+  .counter{flex:1;background:var(--parch-warm);padding:14px 10px;text-align:center;}
+  .counter:nth-child(1){border-radius:3px 0 0 3px;}
+  .counter:nth-child(3){border-radius:0 3px 3px 0;}
+  .counter-num{font-family:var(--serif);font-size:30px;font-weight:500;line-height:1;}
+  .counter:nth-child(1) .counter-num{color:var(--forest);}
+  .counter:nth-child(2) .counter-num{color:var(--ember);}
+  .counter:nth-child(3) .counter-num{color:var(--moss-deep);}
+  .counter-lbl{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);margin-top:7px;}
+  .not-line{max-width:640px;margin:10px auto 0;padding:0 26px;font-style:italic;font-size:13px;color:var(--dusk);text-align:center;}
+  .pct-line{max-width:640px;margin:8px auto 0;padding:0 26px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.04em;color:var(--moss-deep);}
+  .pct-line b{font-family:var(--serif);font-size:15px;font-weight:600;color:var(--moss-deep);letter-spacing:0;}
+
+  /* North Star */
+  .main-wrap{max-width:640px;margin:0 auto;padding:22px 26px 0;}
+
+  /* personal intro */
+  .intro{margin:20px 0 4px;}
+  .intro p{font-size:16.5px;line-height:1.65;color:var(--ink);margin-bottom:13px;max-width:60ch;}
+  .intro-lead{font-family:var(--serif);font-weight:400;font-size:22px;line-height:1.3;color:var(--forest);margin-bottom:15px;}
+  .intro em{font-style:italic;}
+  .intro-sign{font-family:var(--serif);font-style:italic;font-size:18px;color:var(--moss-deep);margin-top:4px;}
+  .intro-toggle{font-family:inherit;font-size:16.5px;color:var(--ember);background:none;border:none;padding:0;cursor:pointer;text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--ember-soft);}
+  .intro-toggle:hover{color:#a94b2f;}
+  .intro-how{margin:4px 0 13px;padding:16px 20px;background:var(--parch-warm);border-radius:3px;}
+  .intro-how ol{margin:0 0 4px;padding-left:20px;}
+  .intro-how li{font-size:15.5px;line-height:1.55;color:var(--ink);margin-bottom:9px;}
+  .intro-note{font-style:italic;font-size:14px;color:var(--ink-soft);margin-bottom:0;}
+  .mono{font-family:'IBM Plex Mono',monospace;font-size:.9em;background:#fffdf7;padding:1px 5px;border-radius:2px;border:1px solid var(--line);}
+
+  .star-block{position:relative;padding:24px 24px 26px;margin:24px 0 8px;background:linear-gradient(160deg,#6b5b8f 0%,#8a76b0 55%,#a892c9 100%);border-radius:3px;overflow:hidden;}
+  .star-block::before{content:"\2726";position:absolute;top:14px;right:20px;font-size:20px;color:#f0e9d8;opacity:.85;}
+  .star-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:#efe6f5;margin-bottom:12px;}
+  .star-text{font-family:var(--serif);font-weight:300;font-size:20px;line-height:1.4;color:#fbf9ff;max-width:46ch;}
+
+  /* JOURNAL browse controls */
+  .journal-head{margin-top:34px;padding-top:26px;border-top:1px solid var(--line);}
+  .journal-title{font-family:var(--serif);font-size:26px;font-weight:400;color:var(--forest);margin-bottom:4px;}
+  .journal-sub{font-size:14px;font-style:italic;color:var(--ink-soft);margin-bottom:18px;}
+  .search-row{margin-bottom:14px;}
+  .search-input{width:100%;font-family:'Newsreader',serif;font-size:16px;padding:12px 15px;border:1.5px solid var(--line);background:#fffdf7;border-radius:2px;color:var(--ink);}
+  .search-input:focus{outline:none;border-color:var(--moss);}
+  .filter-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;}
+  .sort-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:8px;}
+  .sort-label{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);margin-right:2px;}
+  .sort-btn{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;color:var(--ink-soft);background:#fffdf7;border:1.5px solid var(--line);border-radius:20px;padding:7px 13px;cursor:pointer;transition:all .16s;}
+  .sort-btn:hover{border-color:var(--moss);}
+  .sort-btn.sel{background:var(--moss-deep);border-color:var(--moss-deep);color:var(--parchment);}
+
+  /* journal stats */
+  .journal-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:3px;overflow:hidden;margin:16px 0 6px;}
+  .jstat{background:var(--parchment);padding:16px 15px;}
+  .jstat-num{font-family:var(--serif);font-size:26px;font-weight:500;color:var(--forest);line-height:1.05;}
+  .jstat-lbl{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin-top:7px;}
+  .filter-btn{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:var(--ink-soft);background:#fffdf7;border:1.5px solid var(--line);border-radius:20px;padding:8px 14px;cursor:pointer;transition:all .16s;}
+  .filter-btn:hover{border-color:var(--moss);}
+  .filter-btn.sel{background:var(--forest);border-color:var(--forest);color:var(--parchment);}
+  .result-count{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.05em;color:var(--ink-soft);margin:12px 0 4px;}
+
+  /* entries */
+  .entries-list{margin-top:6px;}
+  .entry{padding:20px 0;border-bottom:1px solid var(--line);}
+  .entry-top{display:flex;align-items:baseline;gap:12px;margin-bottom:8px;flex-wrap:wrap;}
+  .entry-day{font-family:var(--serif);font-size:22px;color:var(--ember);font-weight:500;}
+  .entry-date{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;color:var(--ink-soft);text-transform:uppercase;}
+  .entry-season{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.06em;color:var(--moss-deep);text-transform:uppercase;}
+  .entry-sober{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.06em;padding:2px 8px;border-radius:10px;margin-left:auto;}
+  .entry-sober.s{background:#e4ece0;color:var(--moss-deep);}
+  .entry-sober.u{background:#e6e3ed;color:var(--dusk);}
+  .entry-meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin-bottom:10px;}
+  .entry-meta-item{display:inline-flex;align-items:center;gap:6px;}
+  .entry-meta-label{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);}
+  .entry-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
+  .etag{font-family:'IBM Plex Mono',monospace;font-size:10px;padding:3px 9px;border-radius:12px;background:var(--parch-warm);color:var(--ink-soft);}
+  .etag.f{background:#e4ece0;color:var(--moss-deep);}
+  .etag.t{background:#e6e3ed;color:var(--dusk);}
+  .etag.s{background:#f7e6dd;color:var(--ember);}
+  .etag.c{background:#dce8ec;color:#2f5d6b;}
+  .etag.u{background:#f0e6d2;color:#8a6d1f;}
+  .entry-journal{font-size:16px;line-height:1.6;color:var(--ink);white-space:pre-wrap;}
+  .empty-note{text-align:center;padding:50px 20px;color:var(--ink-soft);font-style:italic;font-size:16px;}
+
+  /* pager */
+  .pager{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;margin:24px 0 4px;}
+  .pager:empty{display:none;}
+  .page-btn,.page-num{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.04em;color:var(--forest);background:#fffdf7;border:1.5px solid var(--line);border-radius:2px;padding:8px 12px;cursor:pointer;transition:all .16s;}
+  .page-btn:hover:not([disabled]),.page-num:hover{border-color:var(--moss);}
+  .page-btn[disabled]{opacity:.4;cursor:default;}
+  .page-num{min-width:38px;}
+  .page-num.cur{background:var(--forest);border-color:var(--forest);color:var(--parchment);cursor:default;}
+  .page-ellipsis{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink-soft);padding:0 2px;}
+
+  /* foot */
+  .foot{max-width:640px;margin:34px auto 0;padding:22px 26px 0;border-top:1px solid var(--line);}
+  .foot-note{font-style:italic;font-size:13px;color:var(--ink-soft);line-height:1.6;}
+
+  @media (max-width:480px){
+    .hero{gap:16px;padding:30px 20px 6px;}
+    .ring-wrap{width:200px;height:200px;}
+    .day-num{font-size:48px;}
+    .main-wrap{padding:20px 20px 0;}
+    .counters,.not-line{padding-left:20px;padding-right:20px;}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none !important;}}
+
+  /* ============================================================
+     EDITORIAL REDESIGN  (v2) — widen, scale up, sans labels,
+     masthead, rounded north star, infographic stats
+     ============================================================ */
+
+  /* --- masthead --- */
+  .masthead{max-width:var(--wide);margin:0 auto;padding:22px 32px 18px;display:flex;align-items:baseline;justify-content:space-between;gap:16px;border-bottom:2px solid var(--forest);}
+  .masthead-title{font-family:var(--serif);font-weight:600;font-size:26px;letter-spacing:-.01em;color:var(--forest);line-height:1;}
+  .masthead-kicker{font-family:var(--sans);font-weight:600;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ember);}
+  @media (max-width:560px){ .masthead{padding:16px 20px 14px;} .masthead-title{font-size:20px;} .masthead-kicker{font-size:10px;} }
+
+  /* --- widen + scale the hero --- */
+  .hero{max-width:var(--wide);gap:16px;padding:44px 32px 6px;}
+  .ring-wrap{width:300px;height:300px;}
+  .day-num{font-family:var(--serif);font-weight:600;font-size:78px;}
+  .day-label{font-family:var(--sans);font-weight:600;font-size:11px;letter-spacing:.16em;}
+  .season-name{font-family:var(--serif);font-weight:600;font-size:44px;letter-spacing:-.01em;}
+  .date-today{font-family:var(--sans);font-weight:500;font-size:13px;letter-spacing:.08em;}
+  .milestone{font-size:17px;}
+  .ring-caption{max-width:var(--wide);font-size:13.5px;margin-top:10px;}
+
+  /* --- counters: wider, bigger, cleaner rules --- */
+  .counters{max-width:var(--wide);gap:0;margin-top:22px;padding:0 32px;}
+  .counter{background:transparent;padding:20px 12px 18px;border-top:2px solid var(--forest);border-right:1px solid var(--line);}
+  .counter:first-child{border-left:0;}
+  .counter:last-child{border-right:0;}
+  .counter:nth-child(1),.counter:nth-child(3){border-radius:0;}
+  .counter-num{font-family:var(--serif);font-weight:600;font-size:40px;}
+  .counter-lbl{font-family:var(--sans);font-weight:600;font-size:10.5px;letter-spacing:.1em;margin-top:8px;}
+  .not-line{max-width:var(--wide);font-size:14px;margin-top:16px;}
+  .pct-line{max-width:var(--wide);font-family:var(--sans);font-weight:500;font-size:14px;letter-spacing:0;}
+  .pct-line b{font-family:var(--serif);font-size:17px;}
+
+  /* --- main column widens; intro + entries stay a readable measure --- */
+  .main-wrap{max-width:var(--wide);padding:26px 32px 0;}
+  .intro,.intro p{max-width:var(--read-col);}
+  .intro p{font-size:17px;line-height:1.7;}
+  .intro-lead{font-family:var(--serif);font-weight:600;font-size:26px;line-height:1.25;letter-spacing:-.01em;}
+  .intro-sign{font-family:var(--serif);}
+
+  /* --- About this Page accordion --- */
+  .about{max-width:var(--read-col);margin:22px 0 8px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+  .about-summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:18px 2px;gap:12px;}
+  .about-summary::-webkit-details-marker{display:none;}
+  .about-title{font-family:var(--sans);font-weight:700;font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:var(--forest);}
+  .about-chevron{font-family:var(--sans);font-size:22px;color:var(--ember);transition:transform .2s;line-height:1;}
+  .about[open] .about-chevron{transform:rotate(90deg);}
+  .about .intro{margin:0 0 20px;}
+
+  /* --- north star: rounded, roomier --- */
+  .star-block{border-radius:18px;padding:30px 32px 32px;margin:26px 0 8px;max-width:var(--read-col);box-shadow:0 12px 30px -14px rgba(90,84,112,.55);}
+  .star-block::before{top:20px;right:26px;font-size:22px;}
+  .star-eyebrow{font-family:var(--sans);font-weight:600;font-size:11px;letter-spacing:.18em;}
+  .star-text{font-family:var(--serif);font-weight:400;font-size:23px;line-height:1.45;}
+
+  /* --- journal header --- */
+  .journal-head{max-width:var(--wide);margin-top:44px;padding-top:24px;border-top:2px solid var(--forest);}
+  .journal-title{font-family:var(--serif);font-weight:600;font-size:40px;letter-spacing:-.01em;margin-bottom:16px;}
+
+  /* --- STAT INFOGRAPHIC: stat strip + month bar chart --- */
+  .journal-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:0;background:transparent;border:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);border-radius:0;margin:18px 0 22px;overflow:visible;}
+  .jstat{background:transparent;padding:18px 20px;border-right:1px solid var(--line);}
+  .jstat:nth-child(3n){border-right:0;}
+  .jstat:nth-child(n+4){border-top:1px solid var(--line);}
+  .jstat-num{font-family:var(--serif);font-weight:600;font-size:34px;color:var(--forest);}
+  .jstat-lbl{font-family:var(--sans);font-weight:600;font-size:10.5px;letter-spacing:.09em;margin-top:6px;color:var(--ink-soft);}
+  @media (max-width:640px){ .journal-stats{grid-template-columns:repeat(2,1fr);} .jstat:nth-child(3n){border-right:1px solid var(--line);} .jstat:nth-child(2n){border-right:0;} .jstat:nth-child(n+3){border-top:1px solid var(--line);} }
+
+  /* --- search / filters / sort in sans --- */
+  .search-input{font-family:var(--read);font-size:17px;border-radius:8px;padding:14px 16px;}
+  .filter-btn{font-family:var(--sans);font-weight:600;font-size:11.5px;letter-spacing:.02em;}
+  .sort-label{font-family:var(--sans);font-weight:600;font-size:10.5px;letter-spacing:.09em;}
+  .sort-btn{font-family:var(--sans);font-weight:600;font-size:11.5px;letter-spacing:.02em;}
+  .result-count{font-family:var(--sans);font-weight:500;font-size:12px;letter-spacing:.02em;}
+
+  /* --- entries: readable measure, editorial spacing --- */
+  .entries-list{max-width:var(--read-col);}
+  .entry{padding:30px 0;}
+  .entry-day{font-family:var(--serif);font-weight:600;font-size:30px;}
+  .entry-date{font-family:var(--sans);font-weight:600;font-size:12.5px;letter-spacing:.07em;}
+  .entry-season{font-family:var(--sans);font-weight:600;font-size:11px;letter-spacing:.06em;}
+  .entry-sober{font-family:var(--sans);font-weight:600;font-size:11.5px;letter-spacing:.04em;padding:3px 11px;}
+  .entry-meta-label{font-family:var(--sans);font-weight:600;font-size:11px;letter-spacing:.05em;}
+  .etag{font-family:var(--sans);font-weight:500;font-size:12.5px;letter-spacing:0;padding:4px 11px;}
+  .entry-journal{font-family:var(--read);font-size:19px;line-height:1.72;}
+
+  /* --- pager + foot in sans --- */
+  .pager{max-width:var(--read-col);}
+  .page-btn,.page-num{font-family:var(--sans);font-weight:600;font-size:12px;}
+  .page-ellipsis{font-family:var(--sans);}
+  .foot{max-width:var(--wide);border-top:2px solid var(--forest);}
+  .foot-note{font-size:13.5px;}
+
+  /* --- responsive: collapse to single readable column --- */
+  @media (max-width:760px){
+    .hero{padding:32px 20px 6px;}
+    .ring-wrap{width:240px;height:240px;}
+    .day-num{font-size:60px;}
+    .season-name{font-size:34px;}
+    .counters,.masthead,.main-wrap,.journal-head,.foot,.not-line,.pct-line,.ring-caption{padding-left:20px;padding-right:20px;}
+    .journal-title{font-size:27px;}
+  }
+  /* ============================================================
+     DASHBOARD LAYOUT (v3) — sticky nav, sidebar + panel, slide-over
+     ============================================================ */
+  body{padding-bottom:0;}
+
+  .topnav{position:sticky;top:0;z-index:40;background:rgba(243,236,221,.92);backdrop-filter:saturate(1.2) blur(8px);border-bottom:2px solid var(--forest);}
+  .topnav-inner{max-width:1280px;margin:0 auto;padding:14px 32px;display:flex;align-items:center;justify-content:space-between;gap:16px;}
+  .topnav-brand{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;}
+  .topnav-title{font-family:var(--serif);font-weight:600;font-size:23px;letter-spacing:-.01em;color:var(--forest);line-height:1;}
+  .topnav-kicker{font-family:var(--sans);font-weight:600;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ember);}
+
+  .dash{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:360px 1fr;gap:0;align-items:start;}
+  .sidebar{align-self:start;padding:32px 30px 40px;border-right:1px solid var(--line);}
+  .panel{padding:32px 40px 60px;min-width:0;}
+
+  /* sidebar internals: recenter the ring + stack */
+  .sidebar .ring-wrap{width:210px;height:210px;margin:0 auto 6px;}
+  .sidebar .day-num{font-size:56px;}
+  .sidebar .hero-meta{text-align:center;}
+  .sidebar .season-name{font-size:30px;}
+  .sidebar .ring-caption{padding:0;margin:8px 0 0;max-width:none;font-size:12px;}
+  .sidebar .counters{max-width:none;padding:0;margin-top:22px;}
+  .sidebar .counter{padding:14px 8px 12px;}
+  .sidebar .counter-num{font-size:28px;}
+  .sidebar .counter-lbl{font-size:9.5px;}
+  .sidebar .pct-line{max-width:none;padding:0;margin-top:14px;text-align:center;}
+  .sidebar .journal-stats{grid-template-columns:1fr 1fr;margin:22px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+  .sidebar .jstat{padding:14px 12px;border-right:1px solid var(--line);}
+  .sidebar .jstat:nth-child(2n){border-right:0;}
+  .sidebar .jstat:nth-child(3n){border-right:1px solid var(--line);}
+  .sidebar .jstat:nth-child(n+3){border-top:1px solid var(--line);}
+  .sidebar .jstat-num{font-size:26px;}
+  .sidebar .star-block{max-width:none;margin:22px 0;padding:22px 22px 24px;}
+  .sidebar .star-text{font-size:18px;}
+  .sidebar .not-line{max-width:none;padding:0;margin-top:18px;text-align:center;}
+
+  /* main panel journal */
+  .panel .journal-head{max-width:none;margin-top:0;padding-top:0;border-top:0;}
+  .panel .journal-title{font-size:38px;margin-bottom:18px;}
+  .panel .entries-list{max-width:720px;}
+  .panel .pager{max-width:720px;}
+
+  .foot{max-width:1280px;}
+
+  /* --- responsive: collapse dashboard to single column on tablet/phone --- */
+  @media (max-width:900px){
+    .dash{grid-template-columns:1fr;}
+    .sidebar{position:static;max-height:none;overflow:visible;border-right:0;border-bottom:2px solid var(--forest);padding:26px 24px 30px;}
+    .sidebar .ring-wrap{width:240px;height:240px;}
+    .sidebar .journal-stats{max-width:520px;margin-left:auto;margin-right:auto;}
+    .sidebar .star-block{max-width:520px;margin-left:auto;margin-right:auto;}
+    .panel{padding:28px 24px 50px;}
+    .panel .entries-list,.panel .pager{max-width:none;}
+    .topnav-inner{padding:12px 20px;}
+  }
+  /* ============================================================
+     v4 — bigger brand, larger + fuller sidebar, intro above journal
+     ============================================================ */
+  .topnav-title{font-size:28px;}
+  .topnav-kicker{font-size:12px;}
+
+  /* widen the sidebar and scale its contents up so it isn't swimming in space */
+  .dash{grid-template-columns:420px 1fr;}
+  .sidebar{padding:34px 34px 44px;}
+  .sidebar .ring-wrap{width:270px;height:270px;margin-bottom:8px;}
+  .sidebar .day-num{font-size:70px;}
+  .sidebar .day-label{font-size:12px;}
+  .sidebar .season-name{font-size:40px;}
+  .sidebar .date-today{font-size:13px;}
+  .sidebar .milestone{font-size:17px;}
+  .sidebar .ring-caption{font-size:13px;margin-top:12px;}
+  .sidebar .star-block{margin:26px 0;padding:26px 26px 28px;}
+  .sidebar .star-eyebrow{font-size:11px;}
+  .sidebar .star-text{font-size:21px;line-height:1.45;}
+  .sidebar .counters{margin-top:8px;}
+  .sidebar .counter{padding:18px 8px 16px;}
+  .sidebar .counter-num{font-size:34px;}
+  .sidebar .counter-lbl{font-size:10.5px;}
+  .sidebar .pct-line{font-size:14px;margin-top:16px;}
+  .sidebar .journal-stats{margin:26px 0;}
+  .sidebar .jstat{padding:18px 14px;}
+  .sidebar .jstat-num{font-size:30px;}
+  .sidebar .jstat-lbl{font-size:11px;}
+  .sidebar .not-line{font-size:14px;margin-top:20px;}
+
+  /* intro now sits inline above the journal, in the main panel */
+  .panel .intro{max-width:720px;margin:0 0 30px;padding-bottom:28px;border-bottom:2px solid var(--forest);}
+  .panel .intro p{max-width:none;}
+
+  @media (max-width:900px){
+    .dash{grid-template-columns:1fr;}
+    .sidebar .ring-wrap{width:260px;height:260px;}
+    .panel .intro{max-width:none;}
+  }
+  /* ============================================================
+     v5 — go big: brand, sidebar scale, editorial intro section
+     ============================================================ */
+
+  /* brand: noticeably bigger */
+  .topnav-inner{padding:18px 40px;}
+  .topnav-title{font-size:36px;}
+  .topnav-kicker{font-size:14px;letter-spacing:.16em;}
+
+  /* SIDEBAR: wide and large — the anchored centerpiece */
+  .dash{grid-template-columns:520px 1fr;max-width:1440px;}
+  .sidebar{padding:44px 44px 52px;}
+  .sidebar .ring-wrap{width:360px;height:360px;margin:0 auto 10px;}
+  .sidebar .day-num{font-size:96px;}
+  .sidebar .day-label{font-size:14px;letter-spacing:.18em;}
+  .sidebar .season-name{font-size:56px;}
+  .sidebar .date-today{font-size:15px;letter-spacing:.1em;}
+  .sidebar .milestone{font-size:20px;margin-top:14px;}
+  .sidebar .ring-caption{font-size:14.5px;margin-top:16px;}
+  .sidebar .star-block{margin:30px 0;padding:32px 32px 34px;border-radius:22px;}
+  .sidebar .star-eyebrow{font-size:12px;letter-spacing:.2em;}
+  .sidebar .star-text{font-size:26px;line-height:1.42;}
+  .sidebar .counters{margin-top:10px;}
+  .sidebar .counter{padding:24px 8px 20px;}
+  .sidebar .counter-num{font-size:46px;}
+  .sidebar .counter-lbl{font-size:12px;letter-spacing:.09em;margin-top:9px;}
+  .sidebar .pct-line{font-size:16px;margin-top:20px;}
+  .sidebar .pct-line b{font-size:20px;}
+  .sidebar .journal-stats{margin:30px 0;}
+  .sidebar .jstat{padding:22px 16px;}
+  .sidebar .jstat-num{font-size:38px;}
+  .sidebar .jstat-lbl{font-size:12px;letter-spacing:.08em;margin-top:8px;}
+  .sidebar .not-line{font-size:15.5px;margin-top:24px;line-height:1.6;}
+
+  /* INTRO as a real editorial section */
+  .panel .intro{max-width:760px;margin:0 0 36px;padding-bottom:34px;border-bottom:2px solid var(--forest);}
+  .intro-eyebrow{font-family:var(--sans);font-weight:700;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--ember);margin-bottom:14px;}
+  .intro-head{font-family:var(--serif);font-weight:600;font-size:clamp(40px,5vw,64px);line-height:1.02;letter-spacing:-.02em;color:var(--forest);margin-bottom:16px;}
+  .intro-standfirst{font-family:var(--serif);font-weight:400;font-size:23px;line-height:1.4;color:var(--moss-deep);margin-bottom:26px;max-width:60ch;}
+  .intro-body{font-family:var(--read);font-size:18.5px;line-height:1.72;color:var(--ink);margin-bottom:18px;max-width:66ch;}
+  .intro-dropcap::first-letter{
+    font-family:var(--serif);font-weight:600;float:left;font-size:76px;line-height:.82;
+    padding:6px 12px 0 0;color:var(--ember);
+  }
+  .panel .intro p.intro-body{max-width:66ch;}
+
+  @media (max-width:1100px){
+    .dash{grid-template-columns:440px 1fr;}
+    .sidebar .ring-wrap{width:320px;height:320px;}
+    .sidebar .day-num{font-size:82px;}
+    .sidebar .season-name{font-size:48px;}
+  }
+  @media (max-width:900px){
+    .dash{grid-template-columns:1fr;}
+    .sidebar{max-height:none;}
+    .sidebar .ring-wrap{width:300px;height:300px;}
+    .panel .intro{max-width:none;}
+    .intro-body,.intro-standfirst,.panel .intro p.intro-body{max-width:none;}
+  }
+  /* ============================================================
+     v6 — stats stacked one per line, big values, small labels
+     ============================================================ */
+  .sidebar .journal-stats,
+  .journal-stats{
+    display:block;grid-template-columns:none;background:transparent;border:0;
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    border-radius:0;margin:28px 0;overflow:visible;
+  }
+  .sidebar .jstat,
+  .jstat{
+    background:transparent;padding:18px 2px;border-right:0 !important;border-top:0;
+    border-bottom:1px solid var(--line);
+  }
+  .journal-stats .jstat:last-child{border-bottom:0;}
+  /* big value (matches the feeling/trigger scale you liked) */
+  .sidebar .jstat-val,.jstat-val,
+  .sidebar .jstat-num,.jstat-num{
+    font-family:var(--serif);font-weight:600;font-size:34px;line-height:1.08;color:var(--forest);
+  }
+  /* numbered top-3 skills list, each line the same big size */
+  .jstat-list{list-style:none;margin:0;padding:0;counter-reset:sk;}
+  .jstat-list li{
+    counter-increment:sk;font-family:var(--serif);font-weight:600;font-size:34px;
+    line-height:1.14;color:var(--forest);display:flex;gap:12px;align-items:baseline;
+  }
+  .jstat-list li::before{
+    content:counter(sk);font-family:var(--sans);font-weight:700;font-size:14px;
+    color:var(--ember);min-width:16px;
+  }
+  /* small label under each */
+  .sidebar .jstat-lbl,.jstat-lbl{
+    font-family:var(--sans);font-weight:600;font-size:11px;letter-spacing:.09em;
+    text-transform:uppercase;color:var(--ink-soft);margin-top:8px;
+  }
+  /* ============================================================
+     v7 — journal spans full width below the sidebar+story row
+     ============================================================ */
+  .journal-full{max-width:1440px;margin:0 auto;padding:8px 40px 60px;}
+  .journal-full .journal-head{max-width:none;margin-top:0;padding-top:28px;border-top:2px solid var(--forest);}
+  .journal-full .journal-title{font-size:44px;margin-bottom:6px;}
+  .journal-subhead{font-family:var(--read);font-style:italic;font-size:18px;color:var(--ink-soft);margin:0 0 20px;max-width:70ch;}
+  /* entries in a comfortable reading measure, but the section itself is full width */
+  .journal-full .entries-list{max-width:760px;}
+  .journal-full .pager{max-width:760px;}
+
+  @media (max-width:900px){
+    .journal-full{padding:8px 24px 50px;}
+    .journal-full .entries-list,.journal-full .pager{max-width:none;}
+    .journal-full .journal-title{font-size:32px;}
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <!-- sticky top nav -->
+  <nav class="topnav">
+    <div class="topnav-inner">
+      <div class="topnav-brand">
+        <span class="topnav-title">The Sober Almanac</span>
+        <span class="topnav-kicker">Beck's Journey</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- dashboard: sidebar + main -->
+  <div class="dash">
+    <aside class="sidebar" id="sidebar">
+      <div class="ring-wrap">
+        <svg viewBox="0 0 300 300" class="season-ring" id="season-ring" aria-hidden="true"></svg>
+        <div class="ring-center">
+          <div class="day-num" id="day-num">0</div>
+          <div class="day-label">days awake</div>
+        </div>
+      </div>
+      <div class="hero-meta">
+        <div class="season-name" id="season-name">Summer</div>
+        <div class="date-today" id="date-today"></div>
+        <div class="milestone" id="milestone"></div>
+      </div>
+      <p class="ring-caption">Each mark is one day of 2026. Filled marks are sober days.</p>
+
+      <div class="star-block" id="star-block">
+        <p class="star-eyebrow">North Star</p>
+        <p class="star-text" id="star-text"></p>
+      </div>
+
+      <div class="counters">
+        <div class="counter"><div class="counter-num" id="c-longest">0</div><div class="counter-lbl">longest streak</div></div>
+        <div class="counter"><div class="counter-num" id="c-month">0</div><div class="counter-lbl">sober this month</div></div>
+        <div class="counter"><div class="counter-num" id="c-total">0</div><div class="counter-lbl">days sober total</div></div>
+      </div>
+      <p class="pct-line" id="pct-line"></p>
+
+      <div class="journal-stats" id="journal-stats"></div>
+
+      <p class="not-line">Sobriety is not a straight line. A hard day never erases the clean ones behind it.</p>
+    </aside>
+
+    <main class="panel">
+      <section class="intro" id="intro">
+        <p class="intro-eyebrow">The Story</p>
+        <h1 class="intro-head">Sobriety isn't a Straight Line</h1>
+        <p class="intro-body intro-dropcap">I know people say you can't get addicted to cannabis, but they're wrong. You can literally become addicted to anything: drugs, alcohol, shopping, food, phone games, you name it. I started using cannabis when I went to college 15 years ago, and it quickly became my main coping mechanism for the anxiety and depression I've carried since childhood.</p>
+        <p class="intro-body">Like most addictions, it started because I genuinely enjoyed it and thought it was good for my mental health. But I eventually realized how much it had stagnated my growth and limited my ability to improve my life. For years, I tried cutting back or quitting cold turkey, but I would always end up back in the clutches of addiction.</p>
+        <p class="intro-body">Things changed when I was finally diagnosed with ADHD at 31. It turned out I'd been self-medicating a brain that worked differently than I'd been told my whole life. The right medication and therapy got me to a place where I could truly give sober Beck a fighting chance.</p>
+        <p class="intro-body">When starting out this journey, my therapist Julie told me that it takes a full year for people to successfully overcome an addiction. Her reasoning was that you need to experience sobriety across all the seasons, holidays, events, and days you move through in a year. That way, it's harder for the brain to fight back by insisting you need the substance to get through certain times. For me, I couldn't imagine going camping with my friends without weed, because that's where I always enjoyed it the most.</p>
+        <p class="intro-body">That idea is exactly why this tool counts collective sober days across the whole year, season by season, instead of tracking a single "quit date." Because going sober for a whole year is much easier said than done. When I first heard it, I was dumbstruck. I couldn't stay sober for a few days, let alone 365 of them. Couldn't I just do a month and find balance? The idea of actually quitting terrified me, and I've felt like a failure every time I've tried and relapsed. But I'm not a failure, because healing from addiction is not a straight line. More than half of people who try to quit an addiction relapse. It's a core part of the sobriety journey, not the end of it. Letting go of the all-or-nothing thinking is what helped me start walking this path in the first place, and it's what's helped me stick with it.</p>
+        <p class="intro-body">So far, this approach has hands down been the most effective way I've dealt with my own struggles. I am so proud of the collective sober days I've achieved in 2026. I wouldn't have been able to do it if I never offered myself forgiveness or acceptance when I made the very human mistake of slipping up or thinking I could smoke just a little. I decided to share my story in raw, unedited journal entries for all you dear internet strangers to read because perhaps you will connect to my story. I hope something in my ramblings sticks with you and helps you on your own path to sobriety.</p>
+        <p class="intro-body">If you want to try my tool for yourself, for whatever addiction is limiting your potential, you're welcome to it! <button class="intro-toggle" id="intro-toggle" aria-expanded="false">Here's how &darr;</button></p>
+        <div class="intro-how hidden" id="intro-how">
+          <ol>
+            <li>Download the starter template from my GitHub repo (a file called <span class="mono">starter-template.html</span>). It's the same tool you're looking at now, stripped of my entries and ready for yours.</li>
+            <li>Try it right away by just opening the file in your browser. It runs on your own computer, no account needed. Name what you're stepping back from, pick a start date, and check in.</li>
+            <li>Your journal saves itself in your browser as you go, private to you. Nothing is uploaded anywhere. To keep a permanent copy that won't disappear if you clear your browser, tap <strong>Export backup</strong> every so often. That downloads a file with all your entries. Save it somewhere you'll find it again, like your notes, cloud drive, or email.</li>
+          </ol>
+          <p class="intro-note">A note on phones: this works most smoothly on a computer. You can use it on a phone, but opening a downloaded file is harder there. And phone browsers sometimes clear saved data on their own, so if you go mobile, export a backup often.</p>
+        </div>
+        <p class="intro-sign">Much love,<br>Becks</p>
+      </section>
+    </main>
+  </div>
+
+  <section class="journal-full">
+    <div class="journal-head" id="journal-anchor">
+      <div class="journal-title">The Journal</div>
+      <p class="journal-subhead">Beck's daily journal entries about the highs and lows of their 2026 sobriety journey.</p>
+      <div class="search-row">
+        <input type="text" id="search-input" class="search-input" placeholder="Search the writing, feelings, skills…" />
+      </div>
+      <div class="filter-row" id="filter-row">
+        <button class="filter-btn sel" data-filter="all">All days</button>
+        <button class="filter-btn" data-filter="written">With writing</button>
+        <button class="filter-btn" data-filter="sober">Sober days</button>
+        <button class="filter-btn" data-filter="Winter">Winter</button>
+        <button class="filter-btn" data-filter="Spring">Spring</button>
+        <button class="filter-btn" data-filter="Summer">Summer</button>
+        <button class="filter-btn" data-filter="Autumn">Autumn</button>
+      </div>
+      <div class="sort-row" id="sort-row">
+        <span class="sort-label">Order</span>
+        <button class="sort-btn sel" data-sort="newest">Most recent first</button>
+        <button class="sort-btn" data-sort="oldest">From Day 1</button>
+      </div>
+      <div class="result-count" id="result-count"></div>
+    </div>
+
+    <div class="entries-list" id="entries-list"></div>
+    <nav class="pager" id="pager" aria-label="Journal pages"></nav>
+  </section>
+
+  <footer class="foot">
+    <p class="foot-note">Beck vibe coded the Sober Almanac to help their personal journey. Feedback, comments, or thoughts? Email me at <a href="mailto:bhayes@atharii.co" style="color:var(--ember);text-decoration:underline;text-underline-offset:2px;">bhayes@atharii.co</a>.</p>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var $=function(s){return document.querySelector(s);};
+  var $$=function(s){return Array.prototype.slice.call(document.querySelectorAll(s));};
+
+  var URGE_LABELS={none:"no urge today",whisper:"a whisper",pull:"a real pull",knuckle:"white-knuckle"};
+  var CURRENT_LABELS={"1":"still","2":"gentle","3":"moving","4":"fast","5":"rapids"};
+  var NORTH_STAR="I am awake to my own life. I see the world clearly, and the goodness in me grows with every season.";
+  var NS_COLOR="#6b5b8f";
+
+  /* ============ DATA (read-only) ============ */
+  var DATA={"startDate":null,"offset2026":0,"longestBest":0,"entries":{}};
+
+  // Load entries from an external entries.json so the site can be updated
+  // just by replacing that file — no need to touch this page. Accepts either
+  // a raw state object or a full backup (with a .state wrapper).
+  function normalizeData(raw){
+    var s = (raw && raw.state) ? raw.state : raw;
+    if(!s || typeof s!=="object" || !s.entries) return null;
+    return {
+      startDate: s.startDate || null,
+      offset2026: s.offset2026 || 0,
+      longestBest: s.longestBest || 0,
+      entries: s.entries || {}
+    };
+  }
+
+  /* ---- date + season helpers ---- */
+  function todayKey(){var d=new Date();d.setHours(d.getHours()-5);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+  function fmtDate(k){var p=k.split("-").map(Number);return new Date(p[0],p[1]-1,p[2]).toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"});}
+  function seasonFor(key){var m=Number(key.split("-")[1]),d=Number(key.split("-")[2]),md=m*100+d;if(md>=321&&md<=620)return "Spring";if(md>=621&&md<=922)return "Summer";if(md>=923&&md<=1220)return "Autumn";return "Winter";}
+  function soberDayNumber(key){
+    if(!DATA.startDate) return 0;
+    var keys=Object.keys(DATA.entries).filter(function(k){return k>=DATA.startDate && k<=key && DATA.entries[k].sober==="sober";}).sort();
+    return keys.length;
+  }
+
+  /* ---- counters ---- */
+  function computeCounters(){
+    var ref=todayKey();
+    var keys=Object.keys(DATA.entries).filter(function(k){return k<=ref;}).sort();
+    var total=0,y2026=0,monthCount=0,refMonth=ref.slice(0,7);
+    keys.forEach(function(k){
+      var e=DATA.entries[k];
+      if(e.sober==="sober"){total++;if(k.slice(0,4)==="2026")y2026++;if(k.slice(0,7)===refMonth)monthCount++;}
+    });
+    var streak=0,d=new Date(ref+"T00:00:00");
+    if(!DATA.entries[ref]){d.setDate(d.getDate()-1);}
+    while(true){
+      var k=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+      var e=DATA.entries[k];
+      if(e&&e.sober==="sober"){streak++;d.setDate(d.getDate()-1);}else break;
+    }
+    var now=new Date(ref+"T00:00:00");
+    var elapsed2026=now.getFullYear()===2026?Math.floor((now-new Date("2026-01-01T00:00:00"))/86400000)+1:366;
+    var longest=0,run=0,prev=null;
+    keys.forEach(function(k){
+      if(DATA.entries[k].sober!=="sober"){prev=null;run=0;return;}
+      if(prev){var gap=Math.round((new Date(k+"T00:00:00")-new Date(prev+"T00:00:00"))/86400000);run=gap===1?run+1:1;}else run=1;
+      if(run>longest)longest=run;prev=k;
+    });
+    longest=Math.max(longest,DATA.longestBest||0);
+    var soberY=y2026+(DATA.offset2026||0);
+    var pct=elapsed2026>0?Math.round((soberY/elapsed2026)*100):0;if(pct>100)pct=100;
+    return {streak:streak,longest:longest,y2026:soberY,month:monthCount,total:total+(DATA.offset2026||0),pct:pct};
+  }
+
+  /* ---- ring ---- */
+  function isLeapYear(y){return (y%4===0&&y%100!==0)||y%400===0;}
+  function yearLength(y){return isLeapYear(y)?366:365;}
+  function dayOfYear(key){var p=key.split("-").map(Number);var d=new Date(p[0],p[1]-1,p[2]);var start=new Date(p[0],0,1);return Math.floor((d-start)/86400000)+1;}
+  function polarXY(cx,cy,r,a){var rad=a*Math.PI/180;return [cx+r*Math.cos(rad),cy+r*Math.sin(rad)];}
+  function hexToRgb(h){h=h.replace("#","");return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];}
+  function rgbToHex(r,g,b){function h(v){v=Math.round(v);return (v<16?"0":"")+v.toString(16);}return "#"+h(r)+h(g)+h(b);}
+  function seasonColorAt(t){
+    var stops=[{p:0,c:"#7d9070"},{p:.25,c:"#c9a24b"},{p:.5,c:"#c15a3a"},{p:.75,c:"#5a5470"},{p:1,c:"#7d9070"}];
+    for(var i=0;i<stops.length-1;i++){var a=stops[i],b=stops[i+1];if(t>=a.p&&t<=b.p){var lt=(t-a.p)/(b.p-a.p);var ah=hexToRgb(a.c),bh=hexToRgb(b.c);return rgbToHex(ah[0]+(bh[0]-ah[0])*lt,ah[1]+(bh[1]-ah[1])*lt,ah[2]+(bh[2]-ah[2])*lt);}}
+    return stops[0].c;
+  }
+  function drawRing(){
+    var ring=$("#season-ring");if(!ring)return;
+    var C=150,R=130,tk=todayKey(),year=Number(tk.slice(0,4)),yl=yearLength(year),anglePerDay=360/yl,todayDoy=dayOfYear(tk);
+    var html='',tickInner=R-8,tickOuterFaint=R+5;
+    for(var bg=1;bg<=yl;bg++){var ang=(bg-1)*anglePerDay;var b1=polarXY(C,C,tickInner,ang),b2=polarXY(C,C,tickOuterFaint,ang);html+='<line x1="'+b1[0].toFixed(2)+'" y1="'+b1[1].toFixed(2)+'" x2="'+b2[0].toFixed(2)+'" y2="'+b2[1].toFixed(2)+'" stroke="#d6cab2" stroke-opacity="0.6" stroke-width="1.4"/>';}
+    var tickOuterBold=R+16;
+    for(var doy=1;doy<=todayDoy;doy++){
+      var d=new Date(year,0,doy);var key=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+      var e=DATA.entries[key];
+      if(e&&e.sober==="sober"){var t=(doy-1)/(yl-1);var color=seasonColorAt(t);var ang2=(doy-1)*anglePerDay;var p1=polarXY(C,C,tickInner,ang2),p2=polarXY(C,C,tickOuterBold,ang2);html+='<line x1="'+p1[0].toFixed(2)+'" y1="'+p1[1].toFixed(2)+'" x2="'+p2[0].toFixed(2)+'" y2="'+p2[1].toFixed(2)+'" stroke="'+color+'" stroke-width="3.2" stroke-linecap="round"/>';}
+    }
+    var todayAngle=(todayDoy-1)*anglePerDay,hp=polarXY(C,C,R+14,todayAngle);
+    html+='<circle cx="'+hp[0].toFixed(2)+'" cy="'+hp[1].toFixed(2)+'" r="5.5" fill="#f3ecdd" stroke="#1f2d26" stroke-width="1.8"/>';
+    ring.innerHTML=html;
+  }
+
+  /* ---- north star ---- */
+  function clamp255(v){return Math.max(0,Math.min(255,Math.round(v)));}
+  function lighten(hex,amt){var h=hex.replace("#","");var r=parseInt(h.slice(0,2),16),g=parseInt(h.slice(2,4),16),b=parseInt(h.slice(4,6),16);r=clamp255(r+(255-r)*amt);g=clamp255(g+(255-g)*amt);b=clamp255(b+(255-b)*amt);function hx(v){return (v<16?"0":"")+v.toString(16);}return "#"+hx(r)+hx(g)+hx(b);}
+  function applyNorthStar(){
+    var grad="linear-gradient(160deg,"+NS_COLOR+" 0%,"+lighten(NS_COLOR,.22)+" 55%,"+lighten(NS_COLOR,.42)+" 100%)";
+    var block=$("#star-block");if(block)block.style.background=grad;
+    var txt=$("#star-text");if(txt)txt.textContent=NORTH_STAR;
+  }
+
+  /* ---- header ---- */
+  function milestoneText(dn){
+    var marks={1:"Day one. The bravest one.",7:"A full week awake.",14:"Two weeks. The fog is lifting.",30:"A month. Your baseline is yours again.",60:"Sixty days. Growth you can feel.",90:"Ninety days. A whole season.",100:"One hundred days.",180:"Half a year, every season so far.",270:"Three seasons deep.",365:"A full year. Every season, awake."};
+    if(marks[dn])return marks[dn];
+    var s=seasonFor(todayKey());
+    var lines={"Winter":"Winter tests the most. Still here.","Spring":"Something is growing back.","Summer":"Long light. Staying with it.","Autumn":"The season turns. So does she."};
+    return lines[s]||"";
+  }
+  function renderHeader(){
+    var c=computeCounters();
+    $("#day-num").textContent=c.streak;
+    $("#season-name").textContent=seasonFor(todayKey());
+    $("#date-today").textContent=fmtDate(todayKey());
+    drawRing();
+    $("#milestone").textContent=milestoneText(c.streak);
+    $("#c-longest").textContent=c.longest;
+    $("#c-month").textContent=c.month;
+    $("#c-total").textContent=c.total;
+    var pl=$("#pct-line");
+    if(pl){
+      var msg;
+      if(c.y2026===0)msg="The first sober day writes the number.";
+      else if(c.pct>=90)msg="<b>"+c.pct+"%</b> of 2026 lived sober. This is who she is now.";
+      else if(c.pct>=75)msg="<b>"+c.pct+"%</b> of 2026 lived sober. The clean days are the rule.";
+      else if(c.pct>=50)msg="<b>"+c.pct+"%</b> of 2026 lived sober. More than half, and climbing.";
+      else msg="<b>"+c.pct+"%</b> of 2026 lived sober. Every clean day lifts it.";
+      pl.innerHTML=msg;
+    }
+  }
+
+  /* ---- entries browse ---- */
+  var activeFilter="all", searchTerm="", page=1, sortOrder="newest";
+  var PER_PAGE=20;
+  function escapeHtml(s){return s.replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+  function entryMatchesSearch(e,term){
+    if(!term)return true;
+    term=term.toLowerCase();
+    var hay=[(e.journal||""),(e.feelings||[]).join(" "),(e.triggers||[]).join(" "),(e.skills||[]).join(" ")].join(" ").toLowerCase();
+    return hay.indexOf(term)>=0;
+  }
+  function entryMatchesFilter(k,e,f){
+    if(f==="all")return true;
+    if(f==="written")return !!(e.journal&&e.journal.trim());
+    if(f==="sober")return e.sober==="sober";
+    if(f==="Winter"||f==="Spring"||f==="Summer"||f==="Autumn")return seasonFor(k)===f;
+    return true;
+  }
+  function entryHtml(k){
+    var e=DATA.entries[k];
+    var dayLabel=e.sober==="sober"?('<span class="entry-day">Day '+soberDayNumber(k)+'</span>'):'';
+    var sober=e.sober?'<span class="entry-sober '+(e.sober==="sober"?"s":"u")+'">'+e.sober+'</span>':"";
+    var seasonLbl='<span class="entry-season">'+seasonFor(k)+'</span>';
+    var ft=(e.feelings||[]).map(function(f){return '<span class="etag f">'+escapeHtml(f)+'</span>';}).join("");
+    var tt=(e.triggers||[]).map(function(t){return '<span class="etag t">'+escapeHtml(t)+'</span>';}).join("");
+    var stg=(e.skills||[]).map(function(s){return '<span class="etag s">'+escapeHtml(s)+'</span>';}).join("");
+    var meta=[];
+    if(e.current&&CURRENT_LABELS[e.current])meta.push('<span class="entry-meta-item"><span class="entry-meta-label">thoughts</span><span class="etag c">'+CURRENT_LABELS[e.current]+'</span></span>');
+    if(e.urge&&URGE_LABELS[e.urge])meta.push('<span class="entry-meta-item"><span class="entry-meta-label">urge</span><span class="etag u">'+URGE_LABELS[e.urge]+'</span></span>');
+    var mr=meta.length?'<div class="entry-meta">'+meta.join("")+'</div>':"";
+    var jr=e.journal?'<div class="entry-journal">'+escapeHtml(e.journal)+'</div>':"";
+    return '<div class="entry"><div class="entry-top">'+dayLabel+'<span class="entry-date">'+fmtDate(k)+'</span>'+seasonLbl+sober+'</div>'+mr+((ft||tt||stg)?'<div class="entry-tags">'+ft+tt+stg+'</div>':"")+jr+'</div>';
+  }
+  function renderPager(totalPages){
+    var pg=$("#pager");
+    if(!pg)return;
+    if(totalPages<=1){pg.innerHTML="";return;}
+    // build a compact set of page numbers around the current page
+    var nums=[];
+    for(var i=1;i<=totalPages;i++){
+      if(i===1||i===totalPages||(i>=page-1&&i<=page+1))nums.push(i);
+      else if(nums[nums.length-1]!=="\u2026")nums.push("\u2026");
+    }
+    var html='<button class="page-btn" data-go="prev"'+(page===1?' disabled':'')+'>\u2190 Prev</button>';
+    nums.forEach(function(n){
+      if(n==="\u2026"){html+='<span class="page-ellipsis">\u2026</span>';}
+      else{html+='<button class="page-num'+(n===page?' cur':'')+'" data-go="'+n+'">'+n+'</button>';}
+    });
+    html+='<button class="page-btn" data-go="next"'+(page===totalPages?' disabled':'')+'>Next \u2192</button>';
+    pg.innerHTML=html;
+    $$("#pager [data-go]").forEach(function(b){
+      b.addEventListener("click",function(){
+        if(b.disabled)return;
+        var g=b.dataset.go;
+        if(g==="prev")page=Math.max(1,page-1);
+        else if(g==="next")page=Math.min(totalPages,page+1);
+        else page=Number(g);
+        renderEntries(true);
+      });
+    });
+  }
+  function renderEntries(scroll){
+    // date-sorted, direction from sortOrder
+    var keys=Object.keys(DATA.entries).sort();
+    if(sortOrder==="newest")keys.reverse();
+    var shown=keys.filter(function(k){var e=DATA.entries[k];return entryMatchesFilter(k,e,activeFilter)&&entryMatchesSearch(e,searchTerm);});
+    var total=shown.length;
+    var totalPages=Math.max(1,Math.ceil(total/PER_PAGE));
+    if(page>totalPages)page=totalPages;
+    var start=(page-1)*PER_PAGE;
+    var pageKeys=shown.slice(start,start+PER_PAGE);
+
+    var rc=$("#result-count");
+    if(rc){
+      if(total===0)rc.textContent="No days match";
+      else rc.textContent=total+(total===1?" day":" days")+(searchTerm?' matching \u201c'+searchTerm+'\u201d':"")+" \u00b7 page "+page+" of "+totalPages;
+    }
+    var list=$("#entries-list");
+    if(total===0){list.innerHTML='<div class="empty-note">No days match. Try a different word or filter.</div>';renderPager(1);return;}
+    list.innerHTML=pageKeys.map(entryHtml).join("");
+    renderPager(totalPages);
+    if(scroll){
+      var head=$("#journal-anchor");
+      if(head)head.scrollIntoView({behavior:"smooth",block:"start"});
+    }
+  }
+
+  /* ---- journal stats (distinct from the header counters above) ---- */
+  function titleCase(s){return s?s.charAt(0).toUpperCase()+s.slice(1):s;}
+  function renderJournalStats(){
+    var mount=$("#journal-stats"); if(!mount) return;
+    var MON=["January","February","March","April","May","June","July","August","September","October","November","December"];
+    var keys=Object.keys(DATA.entries);
+    var skillCount={}, feelCount={}, trigCount={}, urgeHeld=0;
+    var monthSober=[0,0,0,0,0,0,0,0,0,0,0,0], monthUsed=[0,0,0,0,0,0,0,0,0,0,0,0];
+    keys.forEach(function(k){
+      var e=DATA.entries[k];
+      (e.skills||[]).forEach(function(s){skillCount[s]=(skillCount[s]||0)+1;});
+      (e.feelings||[]).forEach(function(f){feelCount[f]=(feelCount[f]||0)+1;});
+      (e.triggers||[]).forEach(function(t){trigCount[t]=(trigCount[t]||0)+1;});
+      if(e.urge&&e.urge!=="none")urgeHeld++;
+      var mo=Number(k.slice(5,7))-1;
+      if(e.sober==="sober")monthSober[mo]++;
+      else if(e.sober==="used")monthUsed[mo]++;
+    });
+    function top(obj){var best=null,n=0;Object.keys(obj).forEach(function(k){if(obj[k]>n){n=obj[k];best=k;}});return best?titleCase(best):"\u2014";}
+    function topN(obj,n){
+      return Object.keys(obj).sort(function(a,b){return obj[b]-obj[a];}).slice(0,n).map(titleCase);
+    }
+    // toughest month: among months that have any logged data, the one with the most "used" days;
+    // tie-break on fewest sober days.
+    var toughest="\u2014", worst=-1, worstSober=Infinity;
+    for(var m=0;m<12;m++){
+      if(monthSober[m]+monthUsed[m]===0) continue;
+      if(monthUsed[m]>worst || (monthUsed[m]===worst && monthSober[m]<worstSober)){
+        worst=monthUsed[m]; worstSober=monthSober[m]; toughest=MON[m];
+      }
+    }
+
+    var top3=topN(skillCount,3);
+    var skillsHtml=top3.length
+      ? '<ol class="jstat-list">'+top3.map(function(s){return '<li>'+s+'</li>';}).join("")+'</ol>'
+      : '<div class="jstat-val">\u2014</div>';
+
+    var rows=[
+      {html:skillsHtml, lbl:"top three skills"},
+      {html:'<div class="jstat-val">'+top(feelCount)+'</div>', lbl:"most-named feeling"},
+      {html:'<div class="jstat-val">'+top(trigCount)+'</div>', lbl:"top trigger"},
+      {html:'<div class="jstat-val">'+urgeHeld+'</div>', lbl:"urges met + moved through"},
+      {html:'<div class="jstat-val">'+toughest+'</div>', lbl:"toughest month"}
+    ];
+    mount.innerHTML=rows.map(function(r){
+      return '<div class="jstat">'+r.html+'<div class="jstat-lbl">'+r.lbl+'</div></div>';
+    }).join("");
+  }
+
+  function wire(){
+    $$(".filter-btn").forEach(function(b){b.addEventListener("click",function(){$$(".filter-btn").forEach(function(x){x.classList.remove("sel");});b.classList.add("sel");activeFilter=b.dataset.filter;page=1;renderEntries();});});
+    $$(".sort-btn").forEach(function(b){b.addEventListener("click",function(){$$(".sort-btn").forEach(function(x){x.classList.remove("sel");});b.classList.add("sel");sortOrder=b.dataset.sort;page=1;renderEntries();});});
+    var si=$("#search-input");
+    if(si)si.addEventListener("input",function(){searchTerm=si.value.trim();page=1;renderEntries();});
+    var it=$("#intro-toggle"), ih=$("#intro-how");
+    if(it&&ih)it.addEventListener("click",function(){
+      var open=ih.classList.toggle("hidden")===false;
+      it.setAttribute("aria-expanded",open?"true":"false");
+      it.innerHTML=open?"Hide \u2191":"Here's how \u2193";
+    });
+  }
+
+  function renderAll(){
+    applyNorthStar();
+    renderHeader();
+    renderJournalStats();
+    renderEntries();
+  }
+
+  function init(){
+    wire();
+    // show something immediately, then load the data file
+    renderAll();
+    fetch("entries.json?v="+Date.now())
+      .then(function(r){ if(!r.ok) throw new Error("no entries.json"); return r.json(); })
+      .then(function(raw){
+        var d = normalizeData(raw);
+        if(d){ DATA = d; renderAll(); }
+      })
+      .catch(function(e){
+        // If entries.json is missing or unreadable, the page still works and just shows an empty state.
+        var list=document.getElementById("entries-list");
+        if(list && Object.keys(DATA.entries).length===0){
+          list.innerHTML='<div class="empty-note">Journal is loading, or no entries file was found yet.</div>';
+        }
+      });
+  }
+  init();
+})();
+</script>
+</body>
+</html>
