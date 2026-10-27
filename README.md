@@ -2,7 +2,7 @@
 
 My 2026 journey to sobriety from cannabis — counted in collective sober days, not a single "quit date."
 
-**Read my journal:** https://beckymaehayes.github.io/sober-journey/
+**Read my journal:** https://humbled-by-it.github.io/sober-journey/
 
 **Start your own (free template):** [`starter-template.html`](starter-template.html)
 
