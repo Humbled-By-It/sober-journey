@@ -21,7 +21,7 @@ This repo has two things in it:
 
 You don't need to know how to code, and you don't need to ask an AI to build it. The working code is right here. Take it:
 
-1. **Download** [`starter-template.html`](starter-template-new.html) (open it, then use the download/raw button).
+1. **Download** [`starter-template.html`](starter-template.html) (open it, then use the download/raw button).
 2. **Try it first** — just double-click the file to open it in your browser. It runs entirely on your own computer. Name what you're stepping back from, pick a start date, and check in.
 3. **Want it online, like mine?**
    - Make a free account at [github.com](https://github.com).
